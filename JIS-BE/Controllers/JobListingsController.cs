@@ -24,26 +24,31 @@ namespace JIS_BE.Controllers
         // GET api/joblistings
         [HttpGet]
         public async Task<List<JobListing>> Get() =>
-            await _JobListingsService.GetAsync();
+             await _JobListingsService.GetAsync();
+
 
         // GET api/joblistings/61b3c66bb19574f058e7b2ad
-        [HttpGet("{id:length(24)}")]
-        public async Task<ActionResult<JobListing>> Get(string id)
-        {
-            var JobListing = await _JobListingsService.GetAsync(id);
+        //[HttpGet("{id:length(24)}")]
+        //public async Task<ActionResult<JobListing>> Get(string id)
+        //{
+        //    var JobListing = await _JobListingsService.GetAsync(id);
 
-            if (JobListing is null)
-            {
-                return NotFound();
-            }
+        //    if (JobListing is null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return JobListing;
-        }
+        //    return JobListing;
+        //}
 
         // GET api/joblistings/javascript
-        [HttpGet("{keyword}")]
+        [HttpGet("{searchstring}")]
         public async Task<List<JobListing>> GetByDescription(string searchstring) =>
            await _JobListingsService.GetByDescriptionAsync(searchstring);
+
+
+
+
 
         //[HttpPost]
         //public async Task<IActionResult> Post(JobListing newJobListing)
