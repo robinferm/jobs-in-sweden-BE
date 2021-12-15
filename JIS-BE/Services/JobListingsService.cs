@@ -34,6 +34,9 @@ namespace JIS_BE.Services
         public async Task<List<JobListing>> GetByDescriptionAsync(string searchstring) =>
         await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).ToListAsync();
 
+        public async Task<long> GetCount() =>
+            await _jobListingsCollection.Find(_ => true).CountDocumentsAsync();
+
         //public async Task CreateAsync(JobListing newJobListing) =>
         //    await _jobListingsCollection.InsertOneAsync(newJobListing);
 

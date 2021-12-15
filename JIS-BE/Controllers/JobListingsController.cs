@@ -26,6 +26,10 @@ namespace JIS_BE.Controllers
         public async Task<List<JobListing>> Get() =>
              await _JobListingsService.GetAsync();
 
+        [HttpGet("count")]
+        public async Task<long> GetCount() =>
+            await _JobListingsService.GetCount();
+
 
         // GET api/joblistings/61b3c66bb19574f058e7b2ad
         //[HttpGet("{id:length(24)}")]
