@@ -15,7 +15,6 @@ namespace JIS_BE.Services
         public JobListingsService(IOptions<JISDatabaseSettings> jisDatabaseSettings)
         {
             var mongoClient = new MongoClient(jisDatabaseSettings.Value.ConnectionString);
-
             var mongoDatabase = mongoClient.GetDatabase(jisDatabaseSettings.Value.DatabaseName);
 
             _jobListingsCollection = mongoDatabase.GetCollection<JobListing>(
@@ -31,19 +30,34 @@ namespace JIS_BE.Services
             await _jobListingsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
         // Get by searchstring in description
-        public async Task<List<JobListing>> GetByDescriptionAsync(string searchstring) =>
-        await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).ToListAsync();
+        public async Task<SearchResult> GetByDescriptionAsync(string searchstring, int page)
+        {
+            var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
+            var pageSize = 5;
+            var data = await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
 
+            var result = new SearchResult()
+            {
+                Data = data,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalRecords = total
+            };
+
+            return result;
+
+        }
+
+        // Count all documents
         public async Task<long> GetCount() =>
-            await _jobListingsCollection.Find(_ => true).CountDocumentsAsync();
+            await _jobListingsCollection.EstimatedDocumentCountAsync();
+    }
+    public class SearchResult
+    {
 
-        //public async Task CreateAsync(JobListing newJobListing) =>
-        //    await _jobListingsCollection.InsertOneAsync(newJobListing);
-
-        //public async Task UpdateAsync(string id, JobListing updatedJobListing) =>
-        //    await _jobListingsCollection.ReplaceOneAsync(x => x.Id == id, updatedJobListing);
-
-        //public async Task RemoveAsync(string id) =>
-        //    await _jobListingsCollection.DeleteOneAsync(x => x.Id == id);
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+        public long TotalRecords { get; set; }
+        public ICollection<JobListing> Data { get; set; }
     }
 }
