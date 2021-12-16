@@ -34,7 +34,7 @@ namespace JIS_BE.Services
         {
             var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
             var pageSize = 5;
-            var data = _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).Skip((page - 1) * pageSize).Limit(pageSize).ToList();
+            var data = await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
 
             var result = new SearchResult()
             {
