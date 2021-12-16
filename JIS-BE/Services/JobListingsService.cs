@@ -15,7 +15,6 @@ namespace JIS_BE.Services
         public JobListingsService(IOptions<JISDatabaseSettings> jisDatabaseSettings)
         {
             var mongoClient = new MongoClient(jisDatabaseSettings.Value.ConnectionString);
-
             var mongoDatabase = mongoClient.GetDatabase(jisDatabaseSettings.Value.DatabaseName);
 
             _jobListingsCollection = mongoDatabase.GetCollection<JobListing>(
@@ -35,7 +34,8 @@ namespace JIS_BE.Services
         await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).ToListAsync();
 
         public async Task<long> GetCount() =>
-            await _jobListingsCollection.Find(_ => true).CountDocumentsAsync();
+            await _jobListingsCollection.EstimatedDocumentCountAsync();
+            //await _jobListingsCollection.Find(_ => true).CountDocumentsAsync();
 
         //public async Task CreateAsync(JobListing newJobListing) =>
         //    await _jobListingsCollection.InsertOneAsync(newJobListing);
