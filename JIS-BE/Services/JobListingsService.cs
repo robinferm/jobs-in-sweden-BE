@@ -11,14 +11,15 @@ namespace JIS_BE.Services
     public class JobListingsService
     {
         private readonly IMongoCollection<JobListing> _jobListingsCollection;
+        private readonly IMongoCollection<Statistics> _statisticsCollection;
 
         public JobListingsService(IOptions<JISDatabaseSettings> jisDatabaseSettings)
         {
             var mongoClient = new MongoClient(jisDatabaseSettings.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(jisDatabaseSettings.Value.DatabaseName);
 
-            _jobListingsCollection = mongoDatabase.GetCollection<JobListing>(
-                jisDatabaseSettings.Value.CollectionName);
+            _jobListingsCollection = mongoDatabase.GetCollection<JobListing>(jisDatabaseSettings.Value.CollectionName);
+            _statisticsCollection = mongoDatabase.GetCollection<Statistics>(jisDatabaseSettings.Value.StatisticsCollection);
         }
 
         // Get all, using limit for now
@@ -48,16 +49,14 @@ namespace JIS_BE.Services
 
         }
 
+        public async Task<List<Statistics>> GetStatistics()
+        {
+            var statistics = await _statisticsCollection.Find(_ => true).Limit(20).ToListAsync();
+            return statistics;
+        }
+
         // Count all documents
         public async Task<long> GetCount() =>
             await _jobListingsCollection.EstimatedDocumentCountAsync();
-    }
-    public class SearchResult
-    {
-
-        public int CurrentPage { get; set; }
-        public int PageSize { get; set; }
-        public long TotalRecords { get; set; }
-        public ICollection<JobListing> Data { get; set; }
     }
 }
