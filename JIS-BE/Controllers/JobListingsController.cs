@@ -35,5 +35,10 @@ namespace JIS_BE.Controllers
         [HttpGet("{searchstring}/{page}")]
         public async Task<SearchResult> GetByDescription(string searchstring, int page) =>
            await _JobListingsService.GetByDescriptionAsync(searchstring, page);
+
+        // Get api/joblistings/test
+        [HttpGet("statistics")]
+        public async Task<List<Statistics>> GetStatistics() =>
+            await _JobListingsService.GetStatistics();
     }
 }
