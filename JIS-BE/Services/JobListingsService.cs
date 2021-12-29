@@ -23,8 +23,22 @@ namespace JIS_BE.Services
         }
 
         // Get all, using limit for now
-        public async Task<List<JobListing>> GetAsync() =>
-        await _jobListingsCollection.Find(_ => true).Limit(5).ToListAsync();
+        public async Task<SearchResult> GetAsync(int page)
+        {
+            var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
+            var pageSize = 5;
+            var data = await _jobListingsCollection.Find(_ => true).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
+
+            var result = new SearchResult()
+            {
+                Data = data,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalRecords = total
+            };
+
+            return result;
+        }
 
         // Get by id
         public async Task<JobListing> GetAsync(string id) =>

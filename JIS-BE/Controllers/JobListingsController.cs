@@ -20,23 +20,25 @@ namespace JIS_BE.Controllers
         public JobListingsController(JobListingsService JobListingsService) =>
             _JobListingsService = JobListingsService;
 
+        // Get the latest joblistings without searchstring
+        // GET api/joblistings/1
+        [HttpGet("{page}")]
+        public async Task<SearchResult> Get(int page) =>
+             await _JobListingsService.GetAsync(page);
 
-        // GET api/joblistings
-        [HttpGet]
-        public async Task<List<JobListing>> Get() =>
-             await _JobListingsService.GetAsync();
-
+        // Get the total number of joblistings
         // GET api/joblistings/count
         [HttpGet("count")]
         public async Task<long> GetCount() =>
             await _JobListingsService.GetCount();
 
-        // GET api/joblistings/javascript
+        // Get joblistings with searchstring
+        // GET api/joblistings/javascript/1
         [HttpGet("{searchstring}/{page}")]
         public async Task<SearchResult> GetByDescription(string searchstring, int page) =>
            await _JobListingsService.GetByDescriptionAsync(searchstring, page);
 
-        // Get api/joblistings/test
+        // Get api/joblistings/statistics
         [HttpGet("statistics")]
         public async Task<List<Statistics>> GetStatistics() =>
             await _JobListingsService.GetStatistics();
