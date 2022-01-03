@@ -27,7 +27,7 @@ namespace JIS_BE.Services
         {
             var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
             var pageSize = 5;
-            var data = await _jobListingsCollection.Find(_ => true).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
+            var data = await _jobListingsCollection.Find(_ => true).SortByDescending(x => x.publication_date).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
 
             var result = new SearchResult()
             {
@@ -49,7 +49,7 @@ namespace JIS_BE.Services
         {
             var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
             var pageSize = 5;
-            var data = await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
+            var data = await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).SortByDescending(x => x.publication_date).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
 
             var result = new SearchResult()
             {
