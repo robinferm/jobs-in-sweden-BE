@@ -20,20 +20,39 @@ namespace JIS_BE.Controllers
         public JobListingsController(JobListingsService JobListingsService) =>
             _JobListingsService = JobListingsService;
 
+        // Get the latest joblistings without searchstring
+        // GET api/joblistings/all/1
+        [HttpGet("all/{page}")]
+        public async Task<SearchResult> Get(int page) =>
+             await _JobListingsService.GetAllAsync(page);
 
-        // GET api/joblistings
+        // Get one joblisting by id
+        // GET api/joblistings/61b3c689b19574f058ecd951
+        [HttpGet("{id}")]
+        public async Task<JobListing> GetById(string id) =>
+        await _JobListingsService.GetByIdAsync(id);
+
+        // Get joblistings by multiple ids
+        // GET api/joblistings/?ids=61b3c689b19574f058ecd496&ids=61b3c689b19574f058ecdd45&ids=61b3c689b19574f058ecd951
         [HttpGet]
-        public async Task<List<JobListing>> Get() =>
-             await _JobListingsService.GetAsync();
+        public async Task<List<JobListing>> GetByIds([FromQuery] string[] ids) =>
+            await _JobListingsService.GetByIdsAsync(ids);
 
+        // Get the total number of joblistings
         // GET api/joblistings/count
         [HttpGet("count")]
         public async Task<long> GetCount() =>
             await _JobListingsService.GetCount();
 
-        // GET api/joblistings/javascript
-        [HttpGet("{searchstring}/{page}")]
+        // Get joblistings with searchstring
+        // GET api/joblistings/search/javascript/1
+        [HttpGet("search/{searchstring}/{page}")]
         public async Task<SearchResult> GetByDescription(string searchstring, int page) =>
            await _JobListingsService.GetByDescriptionAsync(searchstring, page);
+
+        // Get api/joblistings/statistics
+        [HttpGet("statistics")]
+        public async Task<List<Statistics>> GetStatistics() =>
+            await _JobListingsService.GetStatistics();
     }
 }
