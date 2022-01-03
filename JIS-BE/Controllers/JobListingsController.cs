@@ -21,10 +21,22 @@ namespace JIS_BE.Controllers
             _JobListingsService = JobListingsService;
 
         // Get the latest joblistings without searchstring
-        // GET api/joblistings/1
-        [HttpGet("{page}")]
+        // GET api/joblistings/all/1
+        [HttpGet("all/{page}")]
         public async Task<SearchResult> Get(int page) =>
-             await _JobListingsService.GetAsync(page);
+             await _JobListingsService.GetAllAsync(page);
+
+        // Get one joblisting by id
+        // GET api/joblistings/61b3c689b19574f058ecd951
+        [HttpGet("{id}")]
+        public async Task<JobListing> GetById(string id) =>
+        await _JobListingsService.GetByIdAsync(id);
+
+        // Get joblistings by multiple ids
+        // GET api/joblistings/?ids=61b3c689b19574f058ecd496&ids=61b3c689b19574f058ecdd45&ids=61b3c689b19574f058ecd951
+        [HttpGet]
+        public async Task<List<JobListing>> GetByIds([FromQuery] string[] ids) =>
+            await _JobListingsService.GetByIdsAsync(ids);
 
         // Get the total number of joblistings
         // GET api/joblistings/count
