@@ -1,5 +1,6 @@
 ﻿using JIS_BE.Models;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace JIS_BE.Services
         }
 
         // Get all, using limit for now
-        public async Task<SearchResult> GetAsync(int page)
+        public async Task<SearchResult> GetAllAsync(int page)
         {
             var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
             var pageSize = 5;
@@ -41,8 +42,17 @@ namespace JIS_BE.Services
         }
 
         // Get by id
-        public async Task<JobListing> GetAsync(string id) =>
+        public async Task<JobListing> GetByIdAsync(string id) =>
             await _jobListingsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        // Get by list of ids
+        public async Task<List<JobListing>> GetByIdsAsync(string[] ids)
+        {
+            //var filterDef = new FilterDefinitionBuilder<JobListing>();
+            //var filter = filterDef.In("_id", ids);
+            //return await _jobListingsCollection.Find(filter).ToListAsync();
+            return await _jobListingsCollection.Find(x => ids.Contains(x.Id)).ToListAsync();
+        }
 
         // Get by searchstring in description
         public async Task<SearchResult> GetByDescriptionAsync(string searchstring, int page)
