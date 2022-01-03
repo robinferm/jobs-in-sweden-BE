@@ -45,8 +45,8 @@ namespace JIS_BE.Controllers
             await _JobListingsService.GetCount();
 
         // Get joblistings with searchstring
-        // GET api/joblistings/javascript/1
-        [HttpGet("{searchstring}/{page}")]
+        // GET api/joblistings/search/javascript/1
+        [HttpGet("search/{searchstring}/{page}")]
         public async Task<SearchResult> GetByDescription(string searchstring, int page) =>
            await _JobListingsService.GetByDescriptionAsync(searchstring, page);
 
