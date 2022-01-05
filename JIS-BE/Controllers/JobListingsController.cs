@@ -44,11 +44,15 @@ namespace JIS_BE.Controllers
         public async Task<long> GetCount() =>
             await _JobListingsService.GetCount();
 
+        [HttpGet("searchhistory")]
+        public async Task<List<SearchEntry>> GetSearchHistory() =>
+            await _JobListingsService.GetSearchHistory();
+
         // Get joblistings with searchstring
         // GET api/joblistings/search/javascript/1
         [HttpGet("search/{searchstring}/{page}")]
         public async Task<SearchResult> GetByDescription(string searchstring, int page) =>
-           await _JobListingsService.GetByDescriptionAsync(searchstring, page);
+            await _JobListingsService.GetByDescriptionAsync(searchstring, page);
 
         // Get api/joblistings/statistics
         [HttpGet("statistics")]
