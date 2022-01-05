@@ -13,6 +13,7 @@ namespace JIS_BE.Services
     {
         private readonly IMongoCollection<JobListing> _jobListingsCollection;
         private readonly IMongoCollection<Statistics> _statisticsCollection;
+        private readonly IMongoCollection<SearchEntry> _searchHistoryCollection;
 
         public JobListingsService(IOptions<JISDatabaseSettings> jisDatabaseSettings)
         {
@@ -21,6 +22,7 @@ namespace JIS_BE.Services
 
             _jobListingsCollection = mongoDatabase.GetCollection<JobListing>(jisDatabaseSettings.Value.CollectionName);
             _statisticsCollection = mongoDatabase.GetCollection<Statistics>(jisDatabaseSettings.Value.StatisticsCollection);
+            _searchHistoryCollection = mongoDatabase.GetCollection<SearchEntry>(jisDatabaseSettings.Value.SearchHistoryCollection);
         }
 
         // Get all, using limit for now
@@ -41,6 +43,9 @@ namespace JIS_BE.Services
             return result;
         }
 
+        public async Task<List<SearchEntry>> GetSearchHistory() =>
+            await _searchHistoryCollection.Find(_ => true).ToListAsync();
+
         // Get by id
         public async Task<JobListing> GetByIdAsync(string id) =>
             await _jobListingsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
@@ -57,6 +62,13 @@ namespace JIS_BE.Services
         // Get by searchstring in description
         public async Task<SearchResult> GetByDescriptionAsync(string searchstring, int page)
         {
+            // Log searchstring to db
+            var searchEntry = new SearchEntry()
+            {
+                Searchstring = searchstring,
+            };
+            await _searchHistoryCollection.InsertOneAsync(searchEntry);
+
             var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
             var pageSize = 5;
             var data = await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).SortByDescending(x => x.publication_date).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
