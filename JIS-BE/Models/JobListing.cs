@@ -20,7 +20,7 @@ namespace JIS_BE.Models
         public string Headline { get; set; }
         [BsonElement("application_deadline")]
         public DateTime Deadline { get; set; }
-        public int number_of_vacancies { get; set; }
+        //public int number_of_vacancies { get; set; }
         [BsonElement("description")]
         public Description description { get; set; }
         //    public Employment_Type employment_type { get; set; }
