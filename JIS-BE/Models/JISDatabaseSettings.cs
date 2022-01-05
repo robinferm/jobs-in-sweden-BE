@@ -13,5 +13,6 @@ namespace JIS_BE.Models
 
         public string CollectionName { get; set; } = null!;
         public string StatisticsCollection { get; set; }
+        public string SearchHistoryCollection { get; set; }
     }
 }
