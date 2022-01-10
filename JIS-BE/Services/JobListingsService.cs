@@ -12,7 +12,7 @@ namespace JIS_BE.Services
     public class JobListingsService
     {
         private readonly IMongoCollection<JobListing> _jobListingsCollection;
-        private readonly IMongoCollection<Statistics> _statisticsCollection;
+        private readonly IMongoCollection<WordCount> _statisticsCollection;
         private readonly IMongoCollection<SearchEntry> _searchHistoryCollection;
 
         public JobListingsService(IOptions<JISDatabaseSettings> jisDatabaseSettings)
@@ -21,7 +21,7 @@ namespace JIS_BE.Services
             var mongoDatabase = mongoClient.GetDatabase(jisDatabaseSettings.Value.DatabaseName);
 
             _jobListingsCollection = mongoDatabase.GetCollection<JobListing>(jisDatabaseSettings.Value.CollectionName);
-            _statisticsCollection = mongoDatabase.GetCollection<Statistics>(jisDatabaseSettings.Value.StatisticsCollection);
+            _statisticsCollection = mongoDatabase.GetCollection<WordCount>(jisDatabaseSettings.Value.StatisticsCollection);
             _searchHistoryCollection = mongoDatabase.GetCollection<SearchEntry>(jisDatabaseSettings.Value.SearchHistoryCollection);
         }
 
@@ -78,14 +78,35 @@ namespace JIS_BE.Services
                 Data = data,
                 CurrentPage = page,
                 PageSize = pageSize,
-                TotalRecords = total
+                TotalRecords = total,
             };
 
             return result;
 
         }
 
-        public async Task<List<Statistics>> GetStatistics()
+        public async Task<Statistics> GetStatistics(string searchstring)
+        {
+            List<JobListing> joblistings;
+            if (searchstring == null)
+            {
+                joblistings = await _jobListingsCollection.Find(_ => true).ToListAsync();
+            }
+            else
+            {
+                joblistings = await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).ToListAsync();
+            }
+            var date = joblistings.GroupBy(x => x.publication_date.Date, (key, values) => new { Date = key, Count = values.Count() });
+            var employer = joblistings.GroupBy(x => x.employer.name, (key, values) => new { Employer = key, Count = values.Count() });
+            var statistics = new Statistics()
+            {
+                Date = date,
+                Employer = employer
+            };
+            return statistics;
+        }
+
+        public async Task<List<WordCount>> GetWordCount()
         {
             var statistics = await _statisticsCollection.Find(_ => true).Limit(20).ToListAsync();
             return statistics;
