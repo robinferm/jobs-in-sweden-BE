@@ -14,6 +14,7 @@ namespace JIS_BE.Services
         private readonly IMongoCollection<JobListing> _jobListingsCollection;
         private readonly IMongoCollection<WordCount> _statisticsCollection;
         private readonly IMongoCollection<SearchEntry> _searchHistoryCollection;
+        private readonly IMongoCollection<object> _employerCountCollection;
 
         public JobListingsService(IOptions<JISDatabaseSettings> jisDatabaseSettings)
         {
@@ -23,6 +24,7 @@ namespace JIS_BE.Services
             _jobListingsCollection = mongoDatabase.GetCollection<JobListing>(jisDatabaseSettings.Value.CollectionName);
             _statisticsCollection = mongoDatabase.GetCollection<WordCount>(jisDatabaseSettings.Value.StatisticsCollection);
             _searchHistoryCollection = mongoDatabase.GetCollection<SearchEntry>(jisDatabaseSettings.Value.SearchHistoryCollection);
+            _employerCountCollection = mongoDatabase.GetCollection<object>(jisDatabaseSettings.Value.EmployerCountCollection);
         }
 
         // Get all, using limit for now
@@ -105,6 +107,9 @@ namespace JIS_BE.Services
             };
             return statistics;
         }
+
+        public async Task<object> GetEmployerCount() =>
+        await  _employerCountCollection.Find(_ => true).ToListAsync();
 
         public async Task<List<WordCount>> GetWordCount()
         {
