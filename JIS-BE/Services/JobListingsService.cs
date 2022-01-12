@@ -69,7 +69,8 @@ namespace JIS_BE.Services
             {
                 Searchstring = searchstring,
             };
-            await _searchHistoryCollection.InsertOneAsync(searchEntry);
+
+            if (page == 1) { await _searchHistoryCollection.InsertOneAsync(searchEntry); }
 
             var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
             var pageSize = 5;
