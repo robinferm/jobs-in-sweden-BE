@@ -110,7 +110,7 @@ namespace JIS_BE.Services
         }
 
         public async Task<object> GetEmployerCount() =>
-        await  _employerCountCollection.Find(_ => true).ToListAsync();
+        await  _employerCountCollection.Find(_ => true).Limit(15).ToListAsync();
 
         public async Task<List<WordCount>> GetWordCount()
         {
