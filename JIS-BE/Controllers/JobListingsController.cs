@@ -58,6 +58,10 @@ namespace JIS_BE.Controllers
         public async Task<object> GetEmployerCount() =>
             await _JobListingsService.GetEmployerCount();
 
+        [HttpGet("categoryCount")]
+        public async Task<object> GetCategoryCount() =>
+            await _JobListingsService.GetCategoryCount();
+
         // Get api/joblistings/wordcount
         [HttpGet("wordcount")]
         public async Task<List<WordCount>> GetWordCount() =>
