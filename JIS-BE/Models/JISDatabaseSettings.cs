@@ -15,5 +15,6 @@ namespace JIS_BE.Models
         public string StatisticsCollection { get; set; }
         public string SearchHistoryCollection { get; set; }
         public string EmployerCountCollection { get; set; }
+        public string CategoryCountCollection { get; set; }
     }
 }
