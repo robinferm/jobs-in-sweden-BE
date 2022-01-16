@@ -33,7 +33,7 @@ namespace JIS_BE.Services
         public async Task<SearchResult> GetAllAsync(int page)
         {
             var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
-            var pageSize = 5;
+            var pageSize = 20;
             var data = await _jobListingsCollection.Find(_ => true).SortByDescending(x => x.publication_date).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
 
             var result = new SearchResult()
@@ -75,7 +75,7 @@ namespace JIS_BE.Services
             if (page == 1) { await _searchHistoryCollection.InsertOneAsync(searchEntry); }
 
             var total = await _jobListingsCollection.EstimatedDocumentCountAsync();
-            var pageSize = 5;
+            var pageSize = 20;
             var data = await _jobListingsCollection.Find(x => x.description.text.Contains(searchstring)).SortByDescending(x => x.publication_date).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
 
             var result = new SearchResult()
